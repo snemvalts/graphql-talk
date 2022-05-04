@@ -2,9 +2,11 @@ import express from 'express';
 
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
-
+import cors from 'cors';
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
+
+
   type Query {
     hello: String
   }
@@ -18,6 +20,7 @@ const root = {
 };
 
 const app = express();
+app.use(cors());
 app.use(
   '/graphql',
   graphqlHTTP({
