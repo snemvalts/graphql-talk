@@ -1,26 +1,68 @@
-type Todo = {
-  id: number;
-  name: string;
-  done: boolean;
-};
+import crypto from 'crypto'
 
-const todos: Todo[] = [{ id: 1, name: 'Tere!', done: false }];
+type User = {
+  id: number
+  name: string
+  secret: string
+  messages: Message['id'][]
+}
+type Message = {
+  id: number
+  message: string
+  userId: User['id']
+}
 
-export const getTodos = () => todos;
+const users: User[] = []
+const messages: Message[] = []
 
-export const addTodo = (todo: Omit<Todo, 'id'>) => {
-  const id = Math.max(...todos.map((todo) => todo.id)) + 1;
-  todos.push({
+export const getUsers = () =>
+  users.map((user) => {
+    const { secret, ...userWithoutSecret } = user
+    return userWithoutSecret
+  })
+
+export const getMessages = () => messages
+
+export const addUser = (
+  userProps: Omit<User, 'id' | 'secret' | 'messages'>
+) => {
+  const id =
+    users.length === 0 ? 0 : Math.max(...users.map((user) => user.id)) + 1
+  const secret = crypto.randomBytes(256).toString('hex')
+
+  const user: User = {
     id,
-    ...todo,
-  });
+    secret,
+    messages: [],
+    ...userProps,
+  }
 
-  return todos;
-};
+  users.push(user)
 
-export const deleteTodo = (todoId: Todo['id']) => {
-  const idx = todos.findIndex((todo) => todo.id === todoId);
-  todos.splice(idx, 1);
+  return user
+}
 
-  return todos;
-};
+export const addMessage = (userProps: User, message: string) => {
+  const id =
+    messages.length === 0
+      ? 0
+      : Math.max(...messages.map((message) => message.id)) + 1
+
+  const user = users.find((user) => userProps.id === user.id)
+
+  if (!user) {
+    throw new Error('No user!')
+  }
+
+  if (user?.secret !== userProps.secret) {
+    throw new Error('Secret incorrect!')
+  }
+
+  messages.push({
+    id,
+    message,
+    userId: user.id,
+  })
+
+  return message
+}
