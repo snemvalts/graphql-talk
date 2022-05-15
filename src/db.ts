@@ -1,12 +1,12 @@
 import crypto from 'crypto'
 
-type User = {
+export type User = {
   id: number
   name: string
   secret: string
   messages: Message['id'][]
 }
-type Message = {
+export type Message = {
   id: number
   message: string
   userId: User['id']
@@ -21,7 +21,13 @@ export const getUsers = () =>
     return userWithoutSecret
   })
 
+export const getUserById = (id: number) =>
+  getUsers().find((user) => user.id === id)
+
 export const getMessages = () => messages
+
+export const getMessagesForUser = (userId: number) =>
+  getMessages().filter((message) => message.userId === userId)
 
 export const addUser = (
   userProps: Omit<User, 'id' | 'secret' | 'messages'>

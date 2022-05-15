@@ -1,9 +1,14 @@
-import { addUser, getMessages, getUsers } from './db'
+import { addMessage, addUser, getMessages, getUsers } from './db'
 import express from 'express'
+import { ApolloServer } from 'apollo-server-express'
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
+import http from 'http'
 
 import { graphqlHTTP } from 'express-graphql'
 import { buildSchema } from 'graphql'
 import cors from 'cors'
+import { typeDefs } from './schema'
+import { resolvers } from './resolver'
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
   type Query {
@@ -22,13 +27,6 @@ const schema = buildSchema(`
     user: User!
   }
 `)
-
-// The root provides a resolver function for each API endpoint
-const root = {
-  users: () => {
-    return getUsers()
-  },
-}
 
 const app = express()
 app.use(cors())
@@ -50,13 +48,34 @@ app.post('/api/register', (req, res) => {
   }
 })
 
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true,
+app.post('/api/message', (req, res) => {
+  if (typeof req.body.message !== 'string' || !req.body.user) {
+    return res.status(400)
+  }
+
+  try {
+    addMessage(req.body.user, req.body.message)
+    return res.json({})
+  } catch (e) {
+    res.status(500).json({ msg: JSON.stringify(e) })
+  }
+})
+
+const start = async () => {
+  const httpServer = http.createServer(app)
+
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    csrfPrevention: true,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   })
-)
-app.listen(4000)
-console.log('Running a GraphQL API server at http://localhost:4000/graphql')
+  await apolloServer.start()
+  apolloServer.applyMiddleware({ app })
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 4000 }, resolve)
+  )
+  console.log('Running a GraphQL API server at http://localhost:4000/graphql')
+}
+
+start()

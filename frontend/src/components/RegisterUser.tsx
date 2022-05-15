@@ -1,13 +1,27 @@
 import axios from 'axios'
-import { useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { Button, Input, InputsContainer } from './SendMessage'
 
-export const RegisterUser = () => {
-  const [name, setName] = useState('')
+type Props = {
+  onCreated: () => void
+}
+
+export const RegisterUser = ({ onCreated }: Props) => {
+  const [name, setName] = useState('@')
   const [created, setCreated] = useState(!!window.localStorage.getItem('user'))
 
-  const registerUser = async () => {
+  useEffect(() => {
+    if (!name) {
+      setName('@')
+    }
+  }, [name])
+
+  const registerUser = async (e: FormEvent) => {
+    e.preventDefault()
     const res = await axios.post('http://localhost:4000/api/register', { name })
     window.localStorage.setItem('user', JSON.stringify(res.data.user))
+    setCreated(true)
+    onCreated()
   }
 
   if (created) {
@@ -22,13 +36,13 @@ export const RegisterUser = () => {
     )
   }
   return (
-    <div>
-      <input
+    <InputsContainer onSubmit={registerUser}>
+      <Input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <button onClick={registerUser}>Register</button>
-    </div>
+      <Button type="submit">Register</Button>
+    </InputsContainer>
   )
 }
