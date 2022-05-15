@@ -48,6 +48,7 @@ export const Input = styled('input', {
   padding: '8px 16px',
   borderRadius: 6,
   boxShadow: 0,
+  fontFamily: 'Inter',
   border: '2px solid #4f4f4f',
 })
 
@@ -57,7 +58,8 @@ export const Button = styled('button', {
   borderRadius: 6,
   boxShadow: 0,
   border: 0,
-  background: '#',
+  background: '#d4d4d4',
+  fontFamily: 'Inter',
   cursor: 'pointer',
   marginLeft: 8,
 })

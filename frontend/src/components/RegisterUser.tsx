@@ -24,6 +24,13 @@ export const RegisterUser = ({ onCreated }: Props) => {
     onCreated()
   }
 
+  const signOutForGood = () => {
+    if (window.confirm('Still want to do it?')) {
+      window.localStorage.removeItem('user')
+      setCreated(false)
+    }
+  }
+
   if (created) {
     const user = JSON.parse(window.localStorage.getItem('user')!)
     return (
@@ -32,6 +39,7 @@ export const RegisterUser = ({ onCreated }: Props) => {
         <b>
           {user.name}, ID: {user.id}
         </b>
+        <Button onClick={signOutForGood}>Sign out for good...</Button>
       </div>
     )
   }
