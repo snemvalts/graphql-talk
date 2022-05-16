@@ -13,6 +13,7 @@ import { resolvers } from './resolver'
 const schema = buildSchema(`
   type Query {
     users: [User]!
+    messages: [Message]!
   }
 
   type User {
@@ -34,6 +35,10 @@ app.use(express.json())
 
 app.post('/api/register', (req, res) => {
   if (typeof req.body.name !== 'string') {
+    return res.status(400)
+  }
+
+  if (req.body.name[0] !== '@') {
     return res.status(400)
   }
 

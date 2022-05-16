@@ -3,9 +3,14 @@ import './App.css'
 import { Users } from './components/Users'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { styled } from '@stitches/react'
+import { Feed } from './components/Feed'
+import axios from 'axios'
+
+export const BASE_URL = `http://${window.location.hostname}:4000`
+axios.defaults.baseURL = BASE_URL
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri: `${BASE_URL}/graphql`,
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
@@ -20,6 +25,7 @@ function App() {
       <MainContainer className="App">
         <Header>minitwitter!</Header>
         <Users />
+        <Feed />
       </MainContainer>
     </ApolloProvider>
   )

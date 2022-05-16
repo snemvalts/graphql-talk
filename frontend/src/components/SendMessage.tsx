@@ -14,13 +14,17 @@ export const SendMessage = ({ onSendMessage }: Props) => {
 
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault()
-    const res = await axios.post('http://localhost:4000/api/message', {
-      user,
-      message,
-    })
+    try {
+      const res = await axios.post('/api/message', {
+        user,
+        message,
+      })
 
-    setMessage('')
-    onSendMessage()
+      setMessage('')
+      onSendMessage()
+    } catch (e) {
+      alert(JSON.stringify(e))
+    }
   }
 
   if (!user) {
@@ -31,6 +35,7 @@ export const SendMessage = ({ onSendMessage }: Props) => {
     <InputsContainer onSubmit={sendMessage}>
       <Input
         type="text"
+        placeholder="your message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
@@ -54,6 +59,7 @@ export const Input = styled('input', {
 
 export const Button = styled('button', {
   fontSize: 24,
+  color: 'black',
   padding: '8px 16px',
   borderRadius: 6,
   boxShadow: 0,

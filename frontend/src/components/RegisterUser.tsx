@@ -1,3 +1,4 @@
+import { styled } from '@stitches/react'
 import axios from 'axios'
 import { FormEvent, useEffect, useState } from 'react'
 import { Button, Input, InputsContainer } from './SendMessage'
@@ -11,17 +12,23 @@ export const RegisterUser = ({ onCreated }: Props) => {
   const [created, setCreated] = useState(!!window.localStorage.getItem('user'))
 
   useEffect(() => {
-    if (!name) {
+    if (!name?.length || (name.length > 0 && name[0] !== '@')) {
       setName('@')
     }
   }, [name])
 
   const registerUser = async (e: FormEvent) => {
     e.preventDefault()
-    const res = await axios.post('http://localhost:4000/api/register', { name })
-    window.localStorage.setItem('user', JSON.stringify(res.data.user))
-    setCreated(true)
-    onCreated()
+    try {
+      const res = await axios.post('/api/register', {
+        name,
+      })
+      window.localStorage.setItem('user', JSON.stringify(res.data.user))
+      setCreated(true)
+      onCreated()
+    } catch (e) {
+      alert(JSON.stringify(e))
+    }
   }
 
   const signOutForGood = () => {
@@ -34,13 +41,10 @@ export const RegisterUser = ({ onCreated }: Props) => {
   if (created) {
     const user = JSON.parse(window.localStorage.getItem('user')!)
     return (
-      <div>
-        You are:{' '}
-        <b>
-          {user.name}, ID: {user.id}
-        </b>
+      <UserContainer>
+        You are: <b>{user.name}</b>
         <Button onClick={signOutForGood}>Sign out for good...</Button>
-      </div>
+      </UserContainer>
     )
   }
   return (
@@ -54,3 +58,7 @@ export const RegisterUser = ({ onCreated }: Props) => {
     </InputsContainer>
   )
 }
+
+const UserContainer = styled('div', {
+  fontSize: 24,
+})

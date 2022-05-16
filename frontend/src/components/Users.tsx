@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { styled } from '@stitches/react'
+import { css, styled } from '@stitches/react'
 import { RegisterUser } from './RegisterUser'
 import { SendMessage } from './SendMessage'
 
@@ -62,7 +62,7 @@ const UsersDisplay = ({ users }: { users: User[] }) => {
   return (
     <UsersContainer>
       {users.map((user) => (
-        <UserContainer key={user.id}>
+        <UserContainer key={user.id} className={css({})()}>
           <UserName>{user.name}</UserName>
           <MessagesContainer>
             {user.messages.map((message) => (
