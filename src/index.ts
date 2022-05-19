@@ -9,25 +9,6 @@ import { buildSchema } from 'graphql'
 import cors from 'cors'
 import { typeDefs } from './schema'
 import { resolvers } from './resolver'
-// Construct a schema, using GraphQL schema language
-const schema = buildSchema(`
-  type Query {
-    users: [User]!
-    messages: [Message]!
-  }
-
-  type User {
-    id: ID!
-    name: String!
-    messages: [Message]
-  }
-
-  type Message {
-    id: ID!
-    message: String!
-    user: User!
-  }
-`)
 
 const app = express()
 app.use(cors())
