@@ -53,15 +53,15 @@ export const Feed = () => {
     <>
       <h2>The best algorithmic feed yet!</h2>
       {[...messages].reverse().map((message) => (
-        <Message key={message.id}>
+        <MessageContainer key={message.id}>
           <b>{message.user.name}: </b>
           {message.message}
-        </Message>
+        </MessageContainer>
       ))}
     </>
   )
 }
 
-const Message = styled('div', {
+const MessageContainer = styled('div', {
   fontSize: 20,
 })

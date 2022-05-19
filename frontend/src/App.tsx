@@ -23,7 +23,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <MainContainer className="App">
-        <Header>minitwitter!</Header>
+        <Header>minitwitter! http://{window.location.hostname}:3000</Header>
         <Users />
         <Feed />
       </MainContainer>
